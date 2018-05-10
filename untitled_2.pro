@@ -21,7 +21,7 @@ elev_name = 'Data_40HZ/Elevation_Surfaces/d_elev'
 irecndx_name = 'Data_40HZ/Time/i_rec_ndx'
 ishortCount_name = 'Data_40HZ/Time/i_shot_count'
 igvalrcv_name = 'Data_40HZ/Waveform/i_gval_rcv'
-idemElv_name = 'Data_40HZ/Geolocation/d_DEM_elv'
+idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
 
 ;iElvUseFlag_name = ''
 ;isatCorrFlg_name = ''
@@ -67,9 +67,9 @@ for i=0,num-1 do begin
   H5D_CLOSE,igvalrcv_id
   
   ;d_DEM_elv
-  ;idemElv_id = H5D_OPEN(file_id,idemElv_name)
-  ;idemElv = H5D_READ(idemElv_id)
-  ;H5D_CLOSE,idemElv_id
+  idemElv_id = H5D_OPEN(file_id,idemElv_name)
+  idemElv = H5D_READ(idemElv_id)
+  H5D_CLOSE,idemElv_id
   
   ;i_ElvuseFlg
   ;i_satCorrFlg 
@@ -98,10 +98,11 @@ for i=0,num-1 do begin
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-        print, theDateTime
+        ;print, theDateTime
         ;print, lon(indice(j)),lat(indice(j)),elev(indice(j))
         ;print, ishortCount(indice(j))
         ;print, igvalrcv(indice(j))
+        print, idemElv(indice(j))
         ;
        ; printf, lun,lon(indice(j)),lat(indice(j)),elev(indice(j))
       endfor
