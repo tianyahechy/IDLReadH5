@@ -5,10 +5,6 @@ r = file_search(fileDirectory,'*.H5',count = num)
 ;print,num
 ;print,r
 
-;时间转换
-theTime = 125831876
-print, FORMAT = '(C(CYI,"/",CMOI,"/",CDI," ",CHI,":",CMI,":",CSI))',theTime
-;print, FORMAT = '(C(CYI,"/",CMOI,"/",CDI," ",CHI,":",CMI,":",CSI))',systime(/JULIAN)
 ;符合条件的索引
 minLat = 39.474390
 maxLat = 40.084414
@@ -28,6 +24,8 @@ idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
 ;isigmaatt_name = ''
 ;ireflctUncor_name = ''
 ;iFrirqaFlag_name =''
+;dgsigma_name =''
+;inumPk_name =''
 
 outputFileName = 'E:\\test\\test3.txt'
 openw, lun,outputFileName , /Get_Lun
@@ -76,6 +74,8 @@ for i=0,num-1 do begin
   ;i_sigmaatt
   ;i_reflctUncor
   ;i_Frir_qaFlag
+  ;d_gsigma
+  ;i_numPk
   
   indiceLat = where(lat ge minLat and lat le maxLat )
   indiceLon = where(lon ge minLon and lon le maxLon )
@@ -84,27 +84,20 @@ for i=0,num-1 do begin
   ;indice = [1,2,3]
   numberOfIndice = N_ELEMENTS(indice)
   
-  ;print, file_name
-  ;printf, lun, file_name
-  ;print, numberOfIndice
   ;判断集合是否为空,先判断大小大于等于1，再判断不为负数
   ;打印到文件
   if numberOfIndice ge 1 then begin
     if indice(0) ge 0 then begin
       ;print,' not empty'
-      ;printf, lun, file_name
+      ;print, file_name
+      printf, lun, file_name
       for j=0,numberOfIndice-1 do begin
         caldat,irecndx(indice(j)), month, day, year, hour,minute,second
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-        ;print, theDateTime
-        ;print, lon(indice(j)),lat(indice(j)),elev(indice(j))
-        ;print, ishortCount(indice(j))
-        ;print, igvalrcv(indice(j))
-        print, idemElv(indice(j))
-        ;
-       ; printf, lun,lon(indice(j)),lat(indice(j)),elev(indice(j))
+        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j))
+       printf, lun,lon(indice(j)),lat(indice(j)),elev(indice(j))
       endfor
     endif else begin
      ; print, 'empty'
@@ -116,22 +109,6 @@ for i=0,num-1 do begin
   endelse
 endfor
 Free_Lun, lun
-
-;numberOfIndice = N_ELEMENTS(indice)
-;numberOfIndiceLat = N_ELEMENTS(indiceLat)
-;numberOfIndiceLon = N_ELEMENTS(indiceLon)
-
-;height(indice)
-;print,elev(indice)
-;print, indice
-;print, indiceLon
-;print, indiceLat
-;print, numberOfIndiceLat
-;print, numberOfIndiceLon
-;print, numberOfIndice
-;print, latSeg
-;print, test
-
 
 end
 
