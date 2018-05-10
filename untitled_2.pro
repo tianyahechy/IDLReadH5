@@ -18,6 +18,7 @@ irecndx_name = 'Data_40HZ/Time/i_rec_ndx'
 ishortCount_name = 'Data_40HZ/Time/i_shot_count'
 igvalrcv_name = 'Data_40HZ/Waveform/i_gval_rcv'
 idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
+inumPk_name ='Data_40HZ/Waveform/i_numPk'
 
 ;iElvUseFlag_name = ''
 ;isatCorrFlg_name = ''
@@ -25,7 +26,7 @@ idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
 ;ireflctUncor_name = ''
 ;iFrirqaFlag_name =''
 ;dgsigma_name =''
-;inumPk_name =''
+;
 
 outputFileName = 'E:\\test\\test3.txt'
 openw, lun,outputFileName , /Get_Lun
@@ -69,13 +70,18 @@ for i=0,num-1 do begin
   idemElv = H5D_READ(idemElv_id)
   H5D_CLOSE,idemElv_id
   
+  ;i_numPk
+  inumPk_id = H5D_OPEN(file_id,inumPk_name)
+  inumPk = H5D_READ(inumPk_id)
+  H5D_CLOSE,inumPk_id
+  
   ;i_ElvuseFlg
   ;i_satCorrFlg 
   ;i_sigmaatt
   ;i_reflctUncor
   ;i_Frir_qaFlag
   ;d_gsigma
-  ;i_numPk
+  ;
   
   indiceLat = where(lat ge minLat and lat le maxLat )
   indiceLon = where(lon ge minLon and lon le maxLon )
@@ -96,8 +102,8 @@ for i=0,num-1 do begin
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j))
-       printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j))
+        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
+        printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
       endfor
     endif else begin
      ; print, 'empty'
