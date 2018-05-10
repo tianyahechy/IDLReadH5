@@ -85,7 +85,7 @@ for i=0,num-1 do begin
   numberOfIndice = N_ELEMENTS(indice)
   
   ;判断集合是否为空,先判断大小大于等于1，再判断不为负数
-  ;打印到文件
+  ;打印到控制台或文件
   if numberOfIndice ge 1 then begin
     if indice(0) ge 0 then begin
       ;print,' not empty'
@@ -97,7 +97,7 @@ for i=0,num-1 do begin
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
         ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j))
-       printf, lun,lon(indice(j)),lat(indice(j)),elev(indice(j))
+       printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j))
       endfor
     endif else begin
      ; print, 'empty'
