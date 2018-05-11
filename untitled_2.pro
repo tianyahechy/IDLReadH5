@@ -30,7 +30,8 @@ frirqaFlag_name = 'Data_40HZ/Atmosphere/FRir_qa_flg'
 title = strcompress('theDateTime' + ' ' + 'lon' + ' ' + 'lat' + ' ' + 'elev'+ ' ' + 'irecndx'+ ' ' + 'ishortCount'+ ' ' + 'igvalrcv'+ ' ' + 'idemElv'+ ' ' + 'inumPk'+ ' ' + 'elevUseFlag'+ ' ' + 'satCorrFlg'+ ' ' + 'sigmaatt'+ ' ' + 'reflctUncor'+ ' ' + 'frirqaFlag'+ ' ' + 'strSigma')
 
 outputFileName = 'E:\\test\\test3.txt'
-openw, lun,outputFileName , /Get_Lun
+openw, lun,outputFileName , /Get_Lun,WIDTH=2000.0
+
 
 for i=0,num-1 do begin
   file_name = r(i)
