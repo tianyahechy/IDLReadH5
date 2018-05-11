@@ -27,7 +27,7 @@ sigmaatt_name = 'Data_40HZ/Quality/sigma_att_flg'
 reflctUncor_name = 'Data_40HZ/Reflectivity/d_reflctUC'
 frirqaFlag_name = 'Data_40HZ/Atmosphere/FRir_qa_flg'
 
-title = strjoin('theDateTime' + '                        ' + 'lon' + '              ' + 'lat' + '          ' + 'elev'+ '        ' + 'irecndx'+ '      ' + 'ishortCount'+ ' ' + 'igvalrcv'+ '    ' + 'idemElv'+ ' ' + 'inumPk'+ ' ' + 'elevUseFlag'+ ' ' + 'satCorrFlg'+ ' ' + 'sigmaatt'+ ' ' + 'reflctUncor'+ ' ' + 'frirqaFlag'+ ' ' + 'strSigma')
+title = strcompress('theDateTime' + ' ' + 'lon' + ' ' + 'lat' + ' ' + 'elev'+ ' ' + 'irecndx'+ ' ' + 'ishortCount'+ ' ' + 'igvalrcv'+ ' ' + 'idemElv'+ ' ' + 'inumPk'+ ' ' + 'elevUseFlag'+ ' ' + 'satCorrFlg'+ ' ' + 'sigmaatt'+ ' ' + 'reflctUncor'+ ' ' + 'frirqaFlag'+ ' ' + 'strSigma')
 
 outputFileName = 'E:\\test\\test3.txt'
 openw, lun,outputFileName , /Get_Lun
@@ -135,21 +135,25 @@ for i=0,num-1 do begin
       for j=0,numberOfIndice-1 do begin
         ;时间
         getSeconds = iDSUTCTime(indice(j))
-        getDays = getSeconds / ( 60 * 60 * 24 );
+        secondsofEachHour = 60.0 * 60.0 
+        secondsofEachDay = secondsofEachHour * 24.0
+        getDays = getSeconds / secondsofEachDay
         ;caldat只用于天数相加.可以为小数
         caldat,julday(1,1,2000,12,0,0) + getDays, month, day, year, hour,minute,second
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-   
-        strSigma =""
-        for thedgSigma=0,5 do begin
-          strSigma = strcompress(strSigma + ' ' + strtrim(dGsigma(thedgSigma,j)))
-        endfor
-        
-        print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
-        printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
-      endfor
+     
+        ;限定条件
+        if inumPk(indice(j)) eq 1 then begin
+          strSigma = dGsigma(0,j)
+          strTotal = strcompress(strtrim(theDateTime)+' '+strtrim(lon(indice(j)))+' '+strtrim(lat(indice(j)))+' '+strtrim(elev(indice(j)))+' '+strtrim(irecndx(indice(j)))+' '+strtrim(ishortCount(indice(j)))+' '+strtrim(igvalrcv(indice(j)))+' '+strtrim(idemElv(indice(j)))+' '+strtrim(inumPk(indice(j)))+' '+strtrim(elevUseFlag(indice(j)))+' '+strtrim(satCorrFlg(indice(j)))+' '+strtrim(sigmaatt(indice(j)))+' '+strtrim(reflctUncor(indice(j)))+' '+strtrim(frirqaFlag(indice(j))));+' '+strtrim(strSigma))
+          ;print, strTotal
+          ;printf, lun, strTotal
+          print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
+          printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
+        endif
+       endfor
     endif else begin
      ; print, 'empty'
      ; printf, lun, 'empty'
