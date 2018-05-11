@@ -19,13 +19,14 @@ ishortCount_name = 'Data_40HZ/Time/i_shot_count'
 igvalrcv_name = 'Data_40HZ/Waveform/i_gval_rcv'
 idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
 inumPk_name ='Data_40HZ/Waveform/i_numPk'
-
+iDSUTCTime_name = 'Data_40HZ/DS_UTCTime_40'
+dGsigma_name ='Data_40HZ/Waveform/d_Gsigma'
+;
 ;iElvUseFlag_name = ''
 ;isatCorrFlg_name = ''
 ;isigmaatt_name = ''
 ;ireflctUncor_name = ''
 ;iFrirqaFlag_name =''
-;dgsigma_name =''
 ;
 
 outputFileName = 'E:\\test\\test3.txt'
@@ -50,10 +51,15 @@ for i=0,num-1 do begin
   elev = H5D_READ(elev_id)
   H5D_CLOSE,lon_id
   
-  ;时间
+  ;索引
   irecndx_id = H5D_OPEN(file_id,irecndx_name)
   irecndx = H5D_READ(elev_id)
   H5D_CLOSE,irecndx_id
+  
+  ;时间
+  iDSUTCTime_id = H5D_OPEN(file_id,iDSUTCTime_name)
+  iDSUTCTime = H5D_READ(iDSUTCTime_id)
+  H5D_CLOSE,iDSUTCTime_id
   
   ;i_short_count
   ishortCount_id = H5D_OPEN(file_id,ishortCount_name)
@@ -75,35 +81,52 @@ for i=0,num-1 do begin
   inumPk = H5D_READ(inumPk_id)
   H5D_CLOSE,inumPk_id
   
+  ;d_Gsigma
+  dGsigma_id = H5D_OPEN(file_id,dGsigma_name)
+  dGsigma = H5D_READ(dGsigma_id)
+  H5D_CLOSE,dGsigma_id
+  
   ;i_ElvuseFlg
   ;i_satCorrFlg 
   ;i_sigmaatt
   ;i_reflctUncor
   ;i_Frir_qaFlag
-  ;d_gsigma
   ;
   
   indiceLat = where(lat ge minLat and lat le maxLat )
   indiceLon = where(lon ge minLon and lon le maxLon )
   indice = where(lat ge minLat and lat le maxLat and lon ge minLon and lon le maxLon )
 
-  ;indice = [1,2,3]
   numberOfIndice = N_ELEMENTS(indice)
   
+  ;printf, lun, file_name
+  print,file_name
+  ;print,dGsigma(2,4) ;26
+  ;printf,  lun,file_name
+  ;printf,  lun,dGsigma(2,4);26
   ;判断集合是否为空,先判断大小大于等于1，再判断不为负数
   ;打印到控制台或文件
   if numberOfIndice ge 1 then begin
     if indice(0) ge 0 then begin
       ;print,' not empty'
       ;print, file_name
-      printf, lun, file_name
+      ;printf, lun, file_name
       for j=0,numberOfIndice-1 do begin
-        caldat,irecndx(indice(j)), month, day, year, hour,minute,second
+        ;时间
+        getSeconds = iDSUTCTime(indice(j))
+        getDays = getSeconds / ( 60 * 60 * 24 );
+        ;caldat只用于天数相加.可以为小数
+        caldat,julday(1,1,2000,12,0,0) + getDays, month, day, year, hour,minute,second
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
-        printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
+        print,theDateTime
+       
+        for thedgSigma=0,5 do begin
+          ;print, dGsigma(thedgSigma,j)
+        endfor
+        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
+        ;printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
       endfor
     endif else begin
      ; print, 'empty'
