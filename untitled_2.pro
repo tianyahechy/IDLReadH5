@@ -21,13 +21,13 @@ idemElv_name = 'Data_40HZ/Geophysical/d_DEM_elv'
 inumPk_name ='Data_40HZ/Waveform/i_numPk'
 iDSUTCTime_name = 'Data_40HZ/DS_UTCTime_40'
 dGsigma_name ='Data_40HZ/Waveform/d_Gsigma'
-;
-;iElvUseFlag_name = ''
-;isatCorrFlg_name = ''
-;isigmaatt_name = ''
-;ireflctUncor_name = ''
-;iFrirqaFlag_name =''
-;
+elevUseFlag_name = 'Data_40HZ/Quality/elev_use_flg'
+satCorrFlg_name = 'Data_40HZ/Quality/sat_corr_flg' 
+sigmaatt_name = 'Data_40HZ/Quality/sigma_att_flg'
+reflctUncor_name = 'Data_40HZ/Reflectivity/d_reflctUC'
+frirqaFlag_name = 'Data_40HZ/Atmosphere/FRir_qa_flg'
+
+title = strjoin('theDateTime' + '                        ' + 'lon' + '              ' + 'lat' + '          ' + 'elev'+ '        ' + 'irecndx'+ '      ' + 'ishortCount'+ ' ' + 'igvalrcv'+ '    ' + 'idemElv'+ ' ' + 'inumPk'+ ' ' + 'elevUseFlag'+ ' ' + 'satCorrFlg'+ ' ' + 'sigmaatt'+ ' ' + 'reflctUncor'+ ' ' + 'frirqaFlag'+ ' ' + 'strSigma')
 
 outputFileName = 'E:\\test\\test3.txt'
 openw, lun,outputFileName , /Get_Lun
@@ -86,12 +86,30 @@ for i=0,num-1 do begin
   dGsigma = H5D_READ(dGsigma_id)
   H5D_CLOSE,dGsigma_id
   
-  ;i_ElvuseFlg
-  ;i_satCorrFlg 
+  ;elev_use_flg
+  elevUseFlag_id = H5D_OPEN(file_id,elevUseFlag_name)
+  elevUseFlag = H5D_READ(elevUseFlag_id)
+  H5D_CLOSE,elevUseFlag_id
+  
+  ;sat_corr_flg
+  satCorrFlg_id = H5D_OPEN(file_id,satCorrFlg_name)
+  satCorrFlg = H5D_READ(satCorrFlg_id)
+  H5D_CLOSE,satCorrFlg_id
+  
   ;i_sigmaatt
+  sigmaatt_id = H5D_OPEN(file_id,sigmaatt_name)
+  sigmaatt = H5D_READ(sigmaatt_id)
+  H5D_CLOSE,sigmaatt_id
+  
   ;i_reflctUncor
+  reflctUncor_id = H5D_OPEN(file_id,reflctUncor_name)
+  reflctUncor = H5D_READ(reflctUncor_id)
+  H5D_CLOSE,reflctUncor_id
+  
   ;i_Frir_qaFlag
-  ;
+  frirqaFlag_id = H5D_OPEN(file_id,frirqaFlag_name)
+  frirqaFlag = H5D_READ(frirqaFlag_id)
+  H5D_CLOSE,frirqaFlag_id
   
   indiceLat = where(lat ge minLat and lat le maxLat )
   indiceLon = where(lon ge minLon and lon le maxLon )
@@ -100,7 +118,7 @@ for i=0,num-1 do begin
   numberOfIndice = N_ELEMENTS(indice)
   
   ;printf, lun, file_name
-  print,file_name
+  ;print,file_name
   ;print,dGsigma(2,4) ;26
   ;printf,  lun,file_name
   ;printf,  lun,dGsigma(2,4);26
@@ -109,8 +127,11 @@ for i=0,num-1 do begin
   if numberOfIndice ge 1 then begin
     if indice(0) ge 0 then begin
       ;print,' not empty'
-      ;print, file_name
-      ;printf, lun, file_name
+      print, file_name
+      printf, lun, file_name
+      print, title
+      printf, lun, title
+      
       for j=0,numberOfIndice-1 do begin
         ;时间
         getSeconds = iDSUTCTime(indice(j))
@@ -120,13 +141,14 @@ for i=0,num-1 do begin
         theDate = strcompress(strtrim(year) + '/'+strtrim(month)+'/'+strtrim(day),/REMOVE_ALL )
         theTime = strcompress(strtrim(hour)+':'+strtrim(minute)+':'+strtrim(second),/REMOVE_ALL )
         theDateTime = strcompress(theDate + ' ' + theTime)
-        print,theDateTime
-       
+   
+        strSigma =""
         for thedgSigma=0,5 do begin
-          ;print, dGsigma(thedgSigma,j)
+          strSigma = strcompress(strSigma + ' ' + strtrim(dGsigma(thedgSigma,j)))
         endfor
-        ;print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
-        ;printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j))
+        
+        print, theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
+        printf, lun,theDateTime,lon(indice(j)),lat(indice(j)),elev(indice(j)), irecndx(indice(j)),ishortCount(indice(j)), igvalrcv(indice(j)), idemElv(indice(j)),inumPk(indice(j)), elevUseFlag(indice(j)),satCorrFlg(indice(j)),sigmaatt(indice(j)),reflctUncor(indice(j)),frirqaFlag(indice(j)), strSigma
       endfor
     endif else begin
      ; print, 'empty'
